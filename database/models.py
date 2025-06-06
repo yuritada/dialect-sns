@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, func
 from sqlalchemy.orm import relationship
 
 # database.pyで作成したBaseクラスをインポート
-from .database import Base
+from database.database import Base
 
 # --- users テーブルの定義 ---
 class User(Base):

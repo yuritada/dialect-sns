@@ -1,34 +1,14 @@
-import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic_settings import BaseSettings
-from pydantic import field_validator
-from typing import List
-from dotenv import load_dotenv
+
+# 新しく作成したconfig.pyからsettingsインスタンスをインポート
+from config import settings
 from database.database import engine
-from .database import models
+from database import models
 
+from routers import users, posts
 
-
-# .envファイルから環境変数を読み込む
-load_dotenv()
-
-# --- 設定クラス ---
-# 環境変数から設定を読み込むためのクラス
-# .envファイルやシステムの環境変数を自動で読み込んでくれる
-class Settings(BaseSettings):
-    # デプロイしたVercelのURLや、ローカル開発用のURLを記述する
-    # 環境変数ではカンマ区切りで設定 -> CORS_ORIGINS="http://localhost:3000,https://your-frontend.vercel.app"
-    CORS_ORIGINS: List[str] = ["http://localhost:3000"]
-
-
-    class Config:
-        # .envファイルを読み込む設定
-        env_file = ".env"
-
-# 設定クラスのインスタンスを作成
-settings = Settings()
-
+# データベースにテーブルを自動作成する処理
 models.Base.metadata.create_all(bind=engine)
 
 
@@ -61,5 +41,6 @@ def read_root():
 
 # 以降、ここに各ルーターを登録していく
 # from .routers import users, posts, translate
-# app.include_router(users.router)
+app.include_router(users.router)
+app.include_router(posts.router)
 # ...
