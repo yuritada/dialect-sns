@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, func
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, func, UniqueConstraint
 from sqlalchemy.orm import relationship
+from .database import Base
 
 # database.pyで作成したBaseクラスをインポート
 from database.database import Base
@@ -46,3 +47,23 @@ class Reply(Base):
     # ReplyとPost/Userのリレーションシップ
     parent_post = relationship("Post", back_populates="replies")
     owner = relationship("User", back_populates="replies")
+
+class Translation(Base):
+    __tablename__ = "translations"
+
+    id = Column(Integer, primary_key=True, index=True)
+    
+    # 'post' or 'reply' を保存し、どちらのテキストか区別する
+    text_type = Column(String, nullable=False, index=True)
+    # 元の投稿(post)または返信(reply)のID
+    original_id = Column(Integer, nullable=False, index=True)
+    # 変換先の方言名 (例: '関西弁')
+    dialect = Column(String, nullable=False, index=True)
+    
+    translated_text = Column(String, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    # 同じテキスト・同じ方言の組み合わせが重複して保存されないようにするための制約
+    __table_args__ = (
+        UniqueConstraint('text_type', 'original_id', 'dialect', name='_text_dialect_uc'),
+    )

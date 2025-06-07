@@ -6,7 +6,7 @@ from config import settings
 from database.database import engine
 from database import models
 
-from routers import users, posts
+from routers import users, posts ,translate
 
 # データベースにテーブルを自動作成する処理
 models.Base.metadata.create_all(bind=engine)
@@ -43,4 +43,5 @@ def read_root():
 # from .routers import users, posts, translate
 app.include_router(users.router)
 app.include_router(posts.router)
+app.include_router(translate.router)
 # ...

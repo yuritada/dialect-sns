@@ -78,3 +78,26 @@ class Token(BaseModel):
 # トークンのペイロード（中身）のスキーマ
 class TokenData(BaseModel):
     username: Optional[str] = None
+
+
+# --- Translation Schemas ---
+# 翻訳リクエストの各アイテムの形式
+class TranslationRequestItem(BaseModel):
+    type: str  # 'post' or 'reply'
+    id: int
+    text: str
+
+# 翻訳リクエスト全体の形式
+class TranslationRequest(BaseModel):
+    dialect: str
+    texts: List[TranslationRequestItem]
+
+# 翻訳レスポンスの各アイテムの形式
+class TranslationResponseItem(BaseModel):
+    type: str
+    id: int
+    translated_text: str
+
+# 翻訳レスポンス全体の形式
+class TranslationResponse(BaseModel):
+    results: List[TranslationResponseItem]
